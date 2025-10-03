@@ -12,6 +12,9 @@
 #' @export
 #'
 absDS <- function(x) {
+  # start OpenTelemetry span
+  # span <- otel::start_local_active_span("dsBase::absDS")
+  span <- otel::start_local_active_span(as.character(sys.call(0)[1]))
   x.var <- eval(parse(text = x), envir = parent.frame())
 
   # compute the absolute values of x

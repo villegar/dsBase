@@ -10,6 +10,8 @@
 #' @export
 #'
 asFactorDS1 <- function(input.var.name=NULL){
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(as.character(sys.call(0)[1]))
   ##################################################################
   #MODULE 1: CAPTURE THE nfilter SETTINGS                          #
   thr<-dsBase::listDisclosureSettingsDS()                          #
@@ -34,6 +36,7 @@ asFactorDS1 <- function(input.var.name=NULL){
   {
     error.message<-
       paste0("FAILED: this variable has too many levels and may be disclosive. It exceeds the max number of levels allowed by nfilter.levels.max: that is ",nfilter.levels.max,". In this study this variable has ",num.levels," factor levels")
+    span$set_status("error", error.message)
     stop(error.message, call. = FALSE)
   }
   
@@ -41,6 +44,7 @@ asFactorDS1 <- function(input.var.name=NULL){
   {
     error.message<-
       paste0("FAILED: this variable has too many levels and may be disclosive. The number of factor levels must not exceed ", (nfilter.levels.density*100), "% of the length of the variable being converted to a factor. The max number of levels in this study is therefore ",max.levels.by.density," but this variable has ",num.levels," factor levels")
+    span$set_status("error", error.message)
     stop(error.message, call. = FALSE)
   }
   

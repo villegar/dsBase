@@ -16,6 +16,8 @@
 #' @export
 #'
 changeRefGroupDS <- function(xvect, ref=NULL, reorderByRef=NULL){
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
   
   if(reorderByRef){
     temp_xvect = stats::relevel(xvect, ref)

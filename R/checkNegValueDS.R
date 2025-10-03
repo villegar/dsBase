@@ -10,6 +10,8 @@
 #' @export
 #'
 checkNegValueDS <- function (weights) {
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
   
   # check if any of the entries is negative and return the output accordingly
   idx <- which(weights < 0)

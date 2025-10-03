@@ -15,6 +15,8 @@
 #' @export
 
 boxPlotGG_data_TreatmentDS <- function(table, variables, group = NULL, group2 = NULL){
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
 
   if(is.null(group) & !is.null(group2)){
     group <- group2
@@ -27,6 +29,7 @@ boxPlotGG_data_TreatmentDS <- function(table, variables, group = NULL, group2 = 
     }
     else{
       if(! any(c("factor") %in% class(table[[group]]))) {
+        span$set_status("error", "Grouping variable must be of class factor")
         stop("Grouping variable must be of class factor")
       }
       data <- table[, c(variables, group)]
@@ -35,6 +38,7 @@ boxPlotGG_data_TreatmentDS <- function(table, variables, group = NULL, group2 = 
   }
   else{
     if((! any(c("factor") %in% class(table[[group]]))) | (! any(c("factor") %in% class(table[[group2]])))){
+      span$set_status("error", "Grouping variable must be of class factor")
       stop("Grouping variable must be of class factor")
     }
     data <- table[, c(variables, group, group2)]

@@ -26,6 +26,8 @@
 #' @export
 #'
 BooleDS <- function(V1.name=NULL, V2.name=NULL, Boolean.operator.n=NULL, na.assign.text, numeric.output=TRUE){
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
 
   # Check Permissive Privacy Control Level.
   dsBase::checkPermissivePrivacyControlLevel(c('permissive', 'banana', 'carrot'))
@@ -56,11 +58,13 @@ V2<-eval(parse(text=V2.name), envir = parent.frame())
 
 if(is.character(V1)){
    studysideMessage<-"FAILED: V_i is character, please convert to numeric, factor or logical before running Boole"
+   span$set_status("error", studysideMessage)
    stop(studysideMessage, call. = FALSE)
    }
 
 if(is.character(V2)){
    studysideMessage<-"FAILED: V_ii is character, please convert to numeric, factor or logical before running Boole"
+   span$set_status("error", studysideMessage)
    stop(studysideMessage, call. = FALSE)
    }
 
@@ -69,11 +73,13 @@ V2.length<-length(V2)
 
 if(!((V1.length == V2.length) | (V2.length==1))){
    studysideMessage<-"FAILED: V_ii must either be of length one or of length equal to V_i"
+   span$set_status("error", studysideMessage)
    stop(studysideMessage, call. = FALSE)
 }
 
 if(!is.numeric(Boolean.operator.n) | Boolean.operator.n==0){
    studysideMessage<-"FAILED: Boolean.operator specified incorrectly. Must be: '==', '!=', '<', '<=', '>' or '>='"
+   span$set_status("error", studysideMessage)
    stop(studysideMessage, call. = FALSE)
 }
 

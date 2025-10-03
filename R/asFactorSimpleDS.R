@@ -15,6 +15,8 @@
 #' @export
 #'
 asFactorSimpleDS <- function(input.var.name=NULL){
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(as.character(sys.call(0)[1]))
 
     input.var <- eval(parse(text=input.var.name), envir = parent.frame())
 

@@ -19,6 +19,8 @@
 #' @export
 #'
 corDS <- function(x=NULL, y=NULL){
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
   
   #############################################################
   #MODULE 1: CAPTURE THE nfilter SETTINGS
@@ -65,6 +67,7 @@ corDS <- function(x=NULL, y=NULL){
     
     studysideMessage <- "ERROR: The ratio of the number of variables over the number of individual-level
                           records exceeds the allowed threshold, there is a possible risk of disclosure"
+    span$set_status("error", studysideMessage)
     stop(studysideMessage, call. = FALSE)
     
   }
@@ -97,6 +100,7 @@ corDS <- function(x=NULL, y=NULL){
   if(is.element('1', Xpar.invalid)==TRUE & varcov.saturation.invalid==0){
     
     studysideMessage <- "ERROR: at least one variable is binary with one category less than the filter threshold for table cell size"
+    span$set_status("error", studysideMessage)
     stop(studysideMessage, call. = FALSE)
 
   }

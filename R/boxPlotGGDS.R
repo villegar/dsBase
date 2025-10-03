@@ -22,6 +22,8 @@
 #' @export
 
 boxPlotGGDS <- function(data_table, group = NULL, group2 = NULL){
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
   
   ###################################################################
   # MODULE 1: CAPTURE THE subset filter SETTINGS                    #
@@ -68,6 +70,7 @@ boxPlotGGDS <- function(data_table, group = NULL, group2 = NULL){
     results <- list(data = stats_full, "no_group")
   }
   if(any(results$data$n < nfilter.subset)){
+    span$set_status("error", "The selected combination of table / table + grouping yielded a subset with lower count than the allowed threshold [", nfilter.subset, "]")
     stop("The selected combination of table / table + grouping yielded a subset with lower count than the allowed threshold [", nfilter.subset, "]")
   } else {
     return(results)

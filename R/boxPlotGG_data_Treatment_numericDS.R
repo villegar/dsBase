@@ -10,6 +10,8 @@
 #' @export
 
 boxPlotGG_data_Treatment_numericDS <- function(vector){
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
   
   data <- data.frame(x = deparse(substitute(vector)), value = vector)
   

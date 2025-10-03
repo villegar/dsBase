@@ -17,10 +17,13 @@
 #' @author Paul Burton for DataSHIELD Development Team
 #' @export
 asDataMatrixDS <- function(x.name) {
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(as.character(sys.call(0)[1]))
   if (is.character(x.name)) {
     x <- eval(parse(text = x.name), envir = parent.frame())
   } else {
     studysideMessage <- "ERROR: x.name must be specified as a character string"
+    span$set_status("error", studysideMessage)
     stop(studysideMessage, call. = FALSE)
   }
 

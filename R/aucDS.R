@@ -11,6 +11,8 @@
 #' @export
 #'
 aucDS <- function(pred=pred, y=y){
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
   
   if(is.character(pred)){
     pred <- eval(parse(text = pred), envir = parent.frame())

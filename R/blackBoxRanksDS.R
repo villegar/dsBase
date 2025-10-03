@@ -47,6 +47,8 @@
 #' @export
 #'
 blackBoxRanksDS <- function(input.var.name=NULL, shared.seedval){ #START FUNC
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
   
   #######################################################
   #MODULE 1: CAPTURE THE nfilter SETTINGS                 
@@ -138,6 +140,7 @@ if(min(input.var.probit)<=0 | max(input.var.probit)>=1){
   error.message<-
     paste0("FAILED: initialised values should strictly be >0 and <1 this rule has been violated
            there is possiblyly an NA, inf or other error in the input.global.ranks")
+  span$set_status("error", error.message)
   stop(error.message, call. = FALSE)
 } 
 
@@ -145,6 +148,7 @@ if(min(input.var.probit)<=0 | max(input.var.probit)>=1){
 if(min(rank(input.global.ranks)-rank(input.var.probit))<0 | max(rank(input.global.ranks)-rank(input.var.probit))>0) {
   error.message<-
     paste0("FAILED: probit initialised values are not in an identical order to the original input variable please check")
+  span$set_status("error", error.message)
   stop(error.message, call. = FALSE)
 } 
 
@@ -259,6 +263,7 @@ if(sum(round(rank(blackbox.ranks.df[,5])-rank(blackbox.ranks.df[,8]),2)==0)!=num
             clientside code which is not recommended. Finally, it can also occur
             if the R session on one or more of the opal data servers runs out
             of memory")
+  span$set_status("error", error.message)
   stop(error.message, call. = FALSE)
 }else{
   message("\nPROCESSING SUCCESSFUL, ALL RANKS AGREE FOR ALL TRANSFORMATIONS\n\n")

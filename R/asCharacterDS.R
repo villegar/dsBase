@@ -13,6 +13,8 @@
 #' @export
 #'
 asCharacterDS <- function(x.name) {
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(as.character(sys.call(0)[1]))
   x <- eval(parse(text = x.name), envir = parent.frame())
 
   output <- as.character(x)

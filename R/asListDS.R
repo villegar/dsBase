@@ -22,6 +22,8 @@
 #' @author Amadou Gaye, Paul Burton for DataSHIELD Development Team
 #' @export
 asListDS <- function (x.name, newobj){
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(as.character(sys.call(0)[1]))
 
     newobj.class <- NULL
     if(is.character(x.name)){
@@ -33,6 +35,7 @@ asListDS <- function (x.name, newobj){
 
     }else{
         studysideMessage<-"ERROR: x.name must be specified as a character string"
+        span$set_status("error", studysideMessage)
         stop(studysideMessage, call. = FALSE)
     }
 

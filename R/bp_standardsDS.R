@@ -24,6 +24,8 @@
 #' @export
 #' 
 bp_standardsDS <- function(sex=sex, age=age, height=height, bp=bp, systolic=systolic){
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
   
   if(is.character(sex)){
     sex <- eval(parse(text = sex), envir = parent.frame())
