@@ -52,6 +52,8 @@
 #' @export
 #'
 getWGSRDS <- function(sex, firstPart, secondPart, index, standing=NA, thirdPart=NA){
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
   
   sex <- eval(parse(text=sex), envir = parent.frame())
   firstPart <- eval(parse(text=firstPart), envir = parent.frame())
@@ -71,7 +73,9 @@ getWGSRDS <- function(sex, firstPart, secondPart, index, standing=NA, thirdPart=
   
   ## Unknown index specified - return NA
   if(!(index %in% c("bfa", "hca", "hfa", "lfa", "mfa", "ssa", "tsa", "wfa", "wfh", "wfl"))){
-    stop("Please provide a correct index!", call.=FALSE)
+    studysideMessage <- "Please provide a correct index!"
+    span$set_status("error", studysideMessage)
+    stop(studysideMessage, call.=FALSE)
   }
   
   ## Round lengths to nearest 0.1 cm

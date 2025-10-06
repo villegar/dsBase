@@ -20,6 +20,8 @@
 #' @export
 #' 
 dataFrameFillDS <- function(df.name, allNames.transmit, class.vect.transmit, levels.vec.transmit){
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
   
   data <- eval(parse(text=df.name), envir = parent.frame())
 
@@ -44,7 +46,9 @@ dataFrameFillDS <- function(df.name, allNames.transmit, class.vect.transmit, lev
 
   for (class.vect.index in 1:length(class.vect)){
       if (! class.vect[class.vect.index] %in% c('numeric', 'integer', 'character', 'factor' , 'logical')){
-         stop(paste0("Unexpected missing class specified: '", class.vect[class.vect.index], "'"), call.=FALSE)
+        studysideMessage <- paste0("Unexpected missing class specified: '", class.vect[class.vect.index], "'")
+        span$set_status("error", studysideMessage)
+        stop(studysideMessage, call.=FALSE)
       }
   }
   

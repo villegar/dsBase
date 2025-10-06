@@ -38,6 +38,8 @@
 #' @export
 #'
 dataFrameDS <- function(vectors=NULL, r.names=NULL, ch.rows=FALSE, ch.names=TRUE, clnames=NULL, strAsFactors=TRUE, completeCases=FALSE){
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
   
   # Check Permissive Privacy Control Level.
   dsBase::checkPermissivePrivacyControlLevel(c('permissive', 'banana', 'carrot'))
@@ -93,6 +95,7 @@ dataFrameDS <- function(vectors=NULL, r.names=NULL, ch.rows=FALSE, ch.names=TRUE
   if(dim(dt)[1] < nfilter.subset){
     dt[] <- NA
     studysideMessage <- "nfilter.trap: dataframe has less than nfilter.subset rows"
+    span$set_status("error", studysideMessage)
     stop(studysideMessage, call. = FALSE)
   }
 

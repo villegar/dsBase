@@ -23,6 +23,8 @@
 #' @export
 #' 
 histogramDS2 <- function (xvect, num.breaks, min, max, method.indicator, k, noise){
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
 
   ##################################################################
   # MODULE 1: CAPTURE THE nfilter SETTINGS                         #
@@ -51,6 +53,7 @@ histogramDS2 <- function (xvect, num.breaks, min, max, method.indicator, k, nois
     # saturation)
     if (num.breaks > (nfilter.levels.density * length(xvect))){
       studysideMessage <- "FAILED: Number of breaks is too big. It may be disclosive - please shorten"
+      span$set_status("error", studysideMessage)
       stop(studysideMessage, call. = FALSE)
     }else{
       # breaks
@@ -91,7 +94,9 @@ histogramDS2 <- function (xvect, num.breaks, min, max, method.indicator, k, nois
     # Check if k is integer and has a value greater than or equal to the pre-specified threshold 
     # and less than or equal to the length of rows of data.complete minus the pre-specified threshold
     if(k < nfilter.kNN | k > (N.data - nfilter.kNN)){
-      stop(paste0("k must be greater than or equal to ", nfilter.kNN, " and less than or equal to ", (N.data-nfilter.kNN), "."), call.=FALSE)
+      studysideMessage <- aste0("k must be greater than or equal to ", nfilter.kNN, " and less than or equal to ", (N.data-nfilter.kNN), ".")
+      span$set_status("error", studysideMessage)
+      stop(studysideMessage, call.=FALSE)
     }else{
       neighbours = k
     }

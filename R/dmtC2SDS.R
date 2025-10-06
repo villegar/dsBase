@@ -46,7 +46,9 @@
 #'
 dmtC2SDS <- function(dfdata.mat.transmit, inout.object.transmit, from, nrows.transmit, ncols.transmit,
                              colnames.transmit,colclass.transmit, byrow){
-
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
+  
     # Check Permissive Privacy Control Level.
     dsBase::checkPermissivePrivacyControlLevel(c('permissive', 'avocado'))
 
@@ -76,6 +78,7 @@ dmtC2SDS <- function(dfdata.mat.transmit, inout.object.transmit, from, nrows.tra
     if(inout.object.text!="MAT"&&inout.object.text!="DF"&&inout.object.text!="TBL")
     {
         studysideMessage<-"FAILED - OBJECT TO COPY FROM CLIENT TO SERVER MUST BE A MATRIX, DATA.FRAME OR TIBBLE"
+        span$set_status("error", studysideMessage)
         return(list(studysideMessage=studysideMessage))
     }
 

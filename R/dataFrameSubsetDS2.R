@@ -57,7 +57,9 @@
 #' @export
 #'
 dataFrameSubsetDS2<-function(df.name=NULL,V1.name=NULL, V2.name=NULL, Boolean.operator.n=NULL,keep.cols=NULL, rm.cols=NULL, keep.NAs=NULL){
-   
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
+  
   # Check Permissive Privacy Control Level.
   dsBase::checkPermissivePrivacyControlLevel(c('permissive', 'banana', 'carrot'))
    
@@ -95,6 +97,7 @@ keep.code.n<-as.numeric(keep.code.c)
                       ###############################################################################|###################| 80 and 100
 if(sum(is.na(keep.code.n))>0){
    studysideMessage<-"FAILED: keep.cols argument contains non-numerics (disclosure risk)"
+   span$set_status("error", studysideMessage)
    stop(studysideMessage, call. = FALSE)
 }else{
 
@@ -107,6 +110,7 @@ keep.cols<-keep.code.n
 
 if(sum(is.na(keep.code.n))>0){
    studysideMessage<-"FAILED: keep.cols argument contains non-numerics (disclosure risk)"
+   span$set_status("error", studysideMessage)
    stop(studysideMessage, call. = FALSE)
 }else{
 
@@ -128,6 +132,7 @@ rm.code.n<-as.numeric(rm.code.c)
 
 if(sum(is.na(rm.code.n))>0){
    studysideMessage<-"FAILED: rm.cols argument contains non-numerics (disclosure risk)"
+   span$set_status("error", studysideMessage)
    stop(studysideMessage, call. = FALSE)
 }else{
 
@@ -140,6 +145,7 @@ rm.cols<-rm.code.n
 
 if(sum(is.na(rm.code.n))>0){
    studysideMessage<-"FAILED: rm.cols argument contains non-numerics (disclosure risk)"
+   span$set_status("error", studysideMessage)
    stop(studysideMessage, call. = FALSE)
 }else{
 
@@ -155,6 +161,7 @@ if(!is.null(df.name)){
    df.name.chars<-strsplit(df.name,split="")
    if(length(df.name.chars[[1]])>nfilter.string){
       studysideMessage<-"FAILED: df.name argument > nfilter.string - please shorten"
+      span$set_status("error", studysideMessage)
       stop(studysideMessage, call. = FALSE)
   }
 }
@@ -164,6 +171,7 @@ if(!is.null(V1.name)){
   if(length(V1.name.chars[[1]])>nfilter.string){
 
    studysideMessage<-"FAILED: V[i].name argument > nfilter.string - please shorten"
+   span$set_status("error", studysideMessage)
    stop(studysideMessage, call. = FALSE)
   }
 }
@@ -172,6 +180,7 @@ if(!is.null(V2.name)){
   V2.name.chars<-strsplit(V2.name,split="")
   if(length(V2.name.chars[[1]])>nfilter.string){
    studysideMessage<-"FAILED: V[ii].name argument > nfilter.string - please shorten"
+   span$set_status("error", studysideMessage)
    stop(studysideMessage, call. = FALSE)
   }
 }
@@ -203,16 +212,19 @@ if(!is.null(V2.name)){
 ##########CHECK APPROPRIATE CLASSES ##############
 if(!is.character(df.name) || !is.data.frame(df2subset)){
    studysideMessage<-"FAILED: df.name argument must be character and must name a data.frame"
+   span$set_status("error", studysideMessage)
    stop(studysideMessage, call. = FALSE)
    }
 
 if(!is.character(V1.name)){
    studysideMessage<-"FAILED: V[i].name must be character"
+   span$set_status("error", studysideMessage)
    stop(studysideMessage, call. = FALSE)
    }
 
 if(!is.character(V2.name)){
    studysideMessage<-"FAILED: V[ii].name must be character"
+   span$set_status("error", studysideMessage)
    stop(studysideMessage, call. = FALSE)
    }
 
@@ -228,17 +240,19 @@ if(!((df.col.length == V1.length))){
                       ###############################################################################|###################| 80 and 100
 
    studysideMessage<-"FAILED: V[i] must of length equal to column length of df being subsetted"
+   span$set_status("error", studysideMessage)
    stop(studysideMessage, call. = FALSE)
 }
 
 if(!((V1.length == V2.length) || (V2.length==1))){
    studysideMessage<-"FAILED: V[ii] must either be of length one or of length equal to V[i]"
-
+   span$set_status("error", studysideMessage)
    stop(studysideMessage, call. = FALSE)
 }
 
 if(!is.numeric(Boolean.operator.n) || Boolean.operator.n==0){
    studysideMessage<-"FAILED: Boolean.operator must be: '==', '!=', '<', '<=', '>' or '>='"
+   span$set_status("error", studysideMessage)
    stop(studysideMessage, call. = FALSE)
 }
 
@@ -286,6 +300,7 @@ subset.size<-dim(df.subset)[1]
 
 if(subset.size < nfilter.subset){
    studysideMessage<-"Subset to be created is too small (<nfilter.subset)"
+   span$set_status("error", studysideMessage)
    stop(studysideMessage, call. = FALSE)
   }
 
@@ -293,6 +308,7 @@ if(subset.size < nfilter.subset){
 
 if(!is.null(keep.cols) && !is.null(rm.cols)){
    studysideMessage<-"You can either specify keep.cols or rm.cols, not both"
+   span$set_status("error", studysideMessage)
    stop(studysideMessage, call. = FALSE)
   }
 

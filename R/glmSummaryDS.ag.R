@@ -20,6 +20,8 @@
 #' @export
 
 glmSummaryDS.ag <- function(x.transmit){
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
 
 #########################################################################
 # DataSHIELD MODULE: CAPTURE THE nfilter SETTINGS                       #
@@ -48,6 +50,7 @@ if(is.character(x.transmit))
 if(!string.safe)
 {
    studysideMessage<-"FAILED: the character string denoting the argument <x.name> is too long and may be disclosive - please shorten"
+   span$set_status("error", studysideMessage)
    stop(studysideMessage, call. = FALSE)
 }
 
@@ -59,12 +62,16 @@ input.obj<-eval(parse(text=x.transmit))
 
 
 if (is.null(input.obj)) {
-    stop('The specified glm object does not exist', call. = FALSE)
+  studysideMessage <- 'The specified glm object does not exist'
+  span$set_status("error", studysideMessage)
+  stop(studysideMessage, call. = FALSE)
 }
 
 input.obj.class <- class(input.obj)
 if ((! ('glm' %in% input.obj.class)) || (! ('lm' %in% input.obj.class))) {
-    stop('The specified glm object is not of class "glm" and "lm"', call. = FALSE)
+  studysideMessage <- 'The specified glm object is not of class "glm" and "lm"'
+  span$set_status("error", studysideMessage)
+  stop(studysideMessage, call. = FALSE)
 }
 
 #block potentially disclosive components of input glm object

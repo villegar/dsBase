@@ -20,6 +20,8 @@
 #' @export
 
 glmSLMADS1<- function(formula, family, weights, offset, data){
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
 
 errorMessage="No errors"
 
@@ -130,6 +132,7 @@ mod.glm.ds <- stats::glm(formula2use, family=final.family.object, x=TRUE, contro
 		if(min.category<nfilter.tab){
 		   y.invalid<-1
 		   errorMessage<-"ERROR: y vector is binary with one category less than filter threshold for table cell size"
+		   span$set_status("error", errorMessage)
 		   stop(errorMessage, call. = FALSE)
 		   }
 		}
@@ -152,6 +155,7 @@ mod.glm.ds <- stats::glm(formula2use, family=final.family.object, x=TRUE, contro
 		if(min.category<nfilter.tab){
 		    Xpar.invalid[pj]<-1
 		    errorMessage<-"ERROR: at least one column in X matrix is binary with one category less than filter threshold for table cell size"
+		    span$set_status("error", errorMessage)
 		    stop(errorMessage, call. = FALSE)
 		}
 	   }
@@ -171,6 +175,7 @@ if(!is.null(w.vect))
     if(min.category<nfilter.tab){
       w.invalid<-1
       errorMessage<-"ERROR: w vector is binary with one category less than filter threshold for table cell size"
+      span$set_status("error", errorMessage)
       stop(errorMessage, call. = FALSE)
     }
   }
@@ -191,6 +196,7 @@ if(!is.null(offsetvar))
 		if(min.category<nfilter.tab){
         o.invalid<-1
 		errorMessage<-"ERROR: offset vector is binary with one category less than filter threshold for table cell size"
+		span$set_status("error", errorMessage)
 		stop(errorMessage, call. = FALSE)
 		}
 	}
@@ -209,6 +215,10 @@ if(!is.null(offsetvar))
 		{
 		errorMessage<-"STUDY DATA OR APPLIED MODEL INVALID FOR THIS SOURCE"
 		}
+	
+	if (errorMessage != "No errors") {
+	  span$set_status("error", errorMessage)
+	}
 		
   return(list(dimX=dimX,coef.names=coef.names,y.invalid=y.invalid,Xpar.invalid=Xpar.invalid,
               w.invalid=w.invalid,o.invalid=o.invalid,

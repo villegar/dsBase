@@ -27,6 +27,8 @@
 #' @export
 #' 
 hetcorDS <- function(data, ML, std.err, bins, pd, use){
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
   
   data <- eval(parse(text=data), envir = parent.frame())
 

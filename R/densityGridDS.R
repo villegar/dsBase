@@ -18,6 +18,8 @@
 #' @export
 #' 
 densityGridDS  <- function(xvect, yvect, limits=FALSE, x.min=NULL, x.max=NULL, y.min=NULL, y.max=NULL, numints=20){
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
   
   #############################################################
   # MODULE 1: CAPTURE THE nfilter SETTINGS                    
@@ -43,7 +45,9 @@ densityGridDS  <- function(xvect, yvect, limits=FALSE, x.min=NULL, x.max=NULL, y
   
   if(limits==FALSE){ 
     if((!is.null(x.min)) | (!is.null(x.max)) | (!is.null(y.min)) | (!is.null(y.max))){
-      stop('Density grid range should not be defined when variable limits is FALSE') 
+      studysideMessage <- 'Density grid range should not be defined when variable limits is FALSE'
+      span$set_status("error", studysideMessage)
+      stop(studysideMessage) 
 	}else{
       y.min <- min(yvect)
       x.min <- min(xvect)
@@ -53,7 +57,9 @@ densityGridDS  <- function(xvect, yvect, limits=FALSE, x.min=NULL, x.max=NULL, y
   }else{
     if(limits==TRUE){
       if((is.null(x.min)) | (is.null(x.max)) | (is.null(y.min)) | (is.null(y.max))){
-        stop('All ranges for density grid should be defined')
+        studysideMessage <- 'All ranges for density grid should be defined'
+        span$set_status("error", studysideMessage)
+        stop(studysideMessage)
       }
 	  }
   }	

@@ -43,7 +43,8 @@
 #' @author Paul Burton 11th November, 2021
 #' @export
 extractQuantilesDS2 <- function(extract.summary.output.ranks.df){ #START FUNC
-
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
   
   #############################################################
   #MODULE 1: CAPTURE THE nfilter SETTINGS                     #

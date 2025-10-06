@@ -25,6 +25,8 @@
 #' @export
 #'
 glmDS2 <- function (formula, family, beta.vect, offset, weights, dataName) {
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
   
   #############################################################
   #MODULE 1: CAPTURE THE nfilter SETTINGS
@@ -380,6 +382,10 @@ glmDS2 <- function (formula, family, beta.vect, offset, weights, dataName) {
     errorMessage.combined <- c(errorMessage.combined,"MODEL FAILED: model or data invalid, info.matrix and score.vector destroyed")
   }else{
     errorMessage.combined <- "No errors"
+  }
+  
+  if (errorMessage.combined != "No errors") {
+    span$set_status("error", errorMessage.combined)
   }
   
   return(list(family=f, info.matrix=info.matrix, score.vect=score.vect, numsubs=numsubs, dev=dev,

@@ -23,6 +23,8 @@
 #' @export
 #' 
 heatmapPlotDS <- function(x, y, k, noise, method.indicator){
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
 
   ###################################################################
   # MODULE 1: CAPTURE THE nfilter SETTINGS                          #

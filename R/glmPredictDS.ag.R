@@ -38,6 +38,8 @@
 #' 
 glmPredictDS.ag <- function(glmname.transmit, newdataname.transmit,
                             output.type,se.fit, dispersion, terms.transmit, na.action){
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
 
 #########################################################################
 # DataSHIELD MODULE: CAPTURE THE nfilter SETTINGS                       #
@@ -74,6 +76,7 @@ if(!string.safe)
 {
    studysideMessage<-paste0("FAILED: the argument <glmname> must be a character string no longer than ",
                      "[nfilter.stringShort], i.e. ", nfilter.stringShort," characters")
+   span$set_status("error", studysideMessage)
    stop(studysideMessage, call. = FALSE)
 }
 
@@ -99,6 +102,7 @@ if(!is.null(newdataname.transmit))
 	{
 		studysideMessage<-paste0("FAILED: the argument <newdataname> must be a character string no longer than ",
                      "[nfilter.stringShort], i.e. ", nfilter.stringShort," characters")
+		span$set_status("error", studysideMessage)
 		stop(studysideMessage, call. = FALSE)
 	}
 }
@@ -124,6 +128,7 @@ if(!string.safe)
 {
    studysideMessage<-paste0("FAILED: the argument <output.type> must be one of three character strings: ",
                      "'link','response', or 'terms'")
+   span$set_status("error", studysideMessage)
    stop(studysideMessage, call. = FALSE)
 }
 
@@ -144,6 +149,7 @@ if(!string.safe)
 {
    studysideMessage<-paste0("FAILED: the argument <na.action> must be one of four character strings: ",
                      "'na.fail','na.omit', 'na.exclude or 'na.pass'")
+   span$set_status("error", studysideMessage)
    stop(studysideMessage, call. = FALSE)
 }
 

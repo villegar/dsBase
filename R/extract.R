@@ -8,6 +8,9 @@
 #' @return a vector of characters
 #'
 extract <- function(input){
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
+  
   input <- unlist(input)
   output1 <- c()
   output2 <- c()

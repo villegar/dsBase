@@ -42,7 +42,8 @@
 #' @author Paul Burton 11th November, 2021
 #' @export
 extractQuantilesDS1 <- function(extract.quantiles,extract.summary.output.ranks.df){ #START FUNC
-
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
   
   #############################################################
   #MODULE 1: CAPTURE THE nfilter SETTINGS                     #
@@ -96,6 +97,7 @@ extractQuantilesDS1 <- function(extract.quantiles,extract.summary.output.ranks.d
    if((numsubs.real/numvals)<=nfilter.tab){
      error.message<-
        paste0("FAILED: the total number of observations across all studies is so small that there is a disclosure risk in releasing the list of quantiles requested. You could change the quantiles.for.estimation argument to request a narrower range of quantiles to be be estimated.")
+     span$set_status("error", error.message)
      stop(error.message, call. = FALSE)
    }
    

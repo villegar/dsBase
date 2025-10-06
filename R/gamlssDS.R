@@ -78,6 +78,8 @@ gamlssDS <- function(formula=formula, sigma.formula=sigma.formula, nu.formula=nu
                      mu.fix=mu.fix, sigma.fix=sigma.fix, nu.fix=nu.fix, tau.fix=tau.fix,
                      control=control, i.control=i.control, centiles=centiles, xvar=xvar, 
                      newobj=newobj){
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
   
   thr <- dsBase::listDisclosureSettingsDS()
   nfilter.glm <- as.numeric(thr$nfilter.glm)
@@ -174,13 +176,19 @@ gamlssDS <- function(formula=formula, sigma.formula=sigma.formula, nu.formula=nu
   
   # checks for oversaturated models
   if(results$df.fit > nfilter.glm * results$N){
-    stop("ERROR: Model has too many parameters, there is a possible risk of disclosure - please simplify model", fixed=TRUE)
+    studysideMessage <- "ERROR: Model has too many parameters, there is a possible risk of disclosure - please simplify model"
+    span$set_status("error", studysideMessage)
+    stop(studysideMessage, fixed=TRUE)
   }
   if(length(results$sigma.terms) > nfilter.glm * results$N){
-    stop("ERROR: Model has too many parameters, there is a possible risk of disclosure - please simplify model", fixed=TRUE)
+    studysideMessage <- "ERROR: Model has too many parameters, there is a possible risk of disclosure - please simplify model"
+    span$set_status("error", studysideMessage)
+    stop(studysideMessage, fixed=TRUE)
   }
   if(length(results$mu.terms) > nfilter.glm * results$N){
-    stop("ERROR: Model has too many parameters, there is a possible risk of disclosure - please simplify model", fixed=TRUE)
+    studysideMessage <- "ERROR: Model has too many parameters, there is a possible risk of disclosure - please simplify model"
+    span$set_status("error", studysideMessage)
+    stop(studysideMessage, fixed=TRUE)
   }
   
   # save the residuals on the server-side

@@ -22,7 +22,8 @@
 #' @export
 #'
 glmDS1 <- function(formula, family, weights, offset, data){
-  
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
   
 #############################################################
 #MODULE 1: CAPTURE THE nfilter SETTINGS
@@ -213,6 +214,10 @@ if(!is.null(offsetvar))
 		{
 		errorMessage<-"STUDY DATA OR APPLIED MODEL INVALID FOR THIS SOURCE"
 		}
+	
+	if (errorMessage != "No errors") {
+	  span$set_status("error", errorMessage)
+	}
 		
   return(list(dimX=dimX,coef.names=coef.names,y.invalid=y.invalid,Xpar.invalid=Xpar.invalid,w.invalid=w.invalid,o.invalid=o.invalid,
               glm.saturation.invalid=glm.saturation.invalid,errorMessage=errorMessage))

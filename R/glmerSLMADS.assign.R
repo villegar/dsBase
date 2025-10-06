@@ -32,6 +32,8 @@
 #' @export
 glmerSLMADS.assign <- function(formula, offset, weights, dataName, family,
                 control_type=NULL, control_value.transmit=NULL, nAGQ=1L, verbose = 0, theta = NULL, fixef = NULL){
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
  
   errorMessage <- "No errors"
 
