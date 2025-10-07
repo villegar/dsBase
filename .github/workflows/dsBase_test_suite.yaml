@@ -65,7 +65,7 @@ jobs:
           
       - name: Install dsBase
         run: |
-          Rscript -e 'install.packages(c("RANN", "stringr", "lme4", "dplyr", "reshape2", "polycor", "gamlss", "gamlss.dist", "mice", "childsds", "usethis", "devtools"), dependencies = TRUE)'
+          Rscript -e 'install.packages(c("RANN", "stringr", "lme4", "dplyr", "reshape2", "polycor", "gamlss", "gamlss.dist", "mice", "childsds", "usethis", "devtools", "otel"), dependencies = TRUE)'
           R CMD INSTALL ./dsBase
           
       - uses: r-lib/actions/setup-r-dependencies@v2
