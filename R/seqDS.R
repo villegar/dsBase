@@ -48,6 +48,8 @@
 #' @export
 seqDS <- function(FROM.value.char,TO.value.char,BY.value.char,LENGTH.OUT.value.char,ALONG.WITH.name)
 {
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
   
   # Check Permissive Privacy Control Level.
   dsBase::checkPermissivePrivacyControlLevel(c('permissive', 'avocado'))
@@ -68,7 +70,8 @@ nfilter.subset<-as.numeric(thr$nfilter.subset)                          #
  if(is.character(FROM.value.char)&&is.numeric(eval(parse(text=FROM.value.char), envir = parent.frame()))){
 	FROM<-eval(parse(text=FROM.value.char), envir = parent.frame())
 	}else{
-   studysideMessage<-"ERROR: FROM.value.char must be specified as a real number in inverted commas eg '-3.74' or '0'"
+   studysideMessage <- "ERROR: FROM.value.char must be specified as a real number in inverted commas eg '-3.74' or '0'"
+   span$set_status("error", studysideMessage)
    stop(studysideMessage, call. = FALSE)
    }
  
@@ -78,7 +81,8 @@ nfilter.subset<-as.numeric(thr$nfilter.subset)                          #
 		{
 		TO<-eval(parse(text=TO.value.char), envir = parent.frame())
 		}else{
-		studysideMessage<-"ERROR: TO.value.char must be specified as a real number in inverted commas eg '-3.74' or '0'"
+		studysideMessage <- "ERROR: TO.value.char must be specified as a real number in inverted commas eg '-3.74' or '0'"
+		span$set_status("error", studysideMessage)
 		stop(studysideMessage, call. = FALSE)
 		}
 	}
@@ -91,7 +95,8 @@ nfilter.subset<-as.numeric(thr$nfilter.subset)                          #
  if(is.character(BY.value.char)&&is.numeric(eval(parse(text=BY.value.char), envir = parent.frame()))){
 	BY<-eval(parse(text=BY.value.char), envir = parent.frame())
 	}else{
-   studysideMessage<-"ERROR: BY.value.char must be specified as a real number in inverted commas eg '-3.74' or '0'"
+   studysideMessage <- "ERROR: BY.value.char must be specified as a real number in inverted commas eg '-3.74' or '0'"
+   span$set_status("error", studysideMessage)
    stop(studysideMessage, call. = FALSE)
    }
 
@@ -99,7 +104,8 @@ nfilter.subset<-as.numeric(thr$nfilter.subset)                          #
 		if(is.character(LENGTH.OUT.value.char)&&is.numeric(eval(parse(text=LENGTH.OUT.value.char), envir = parent.frame()))){
 		LENGTH.OUT<-eval(parse(text=LENGTH.OUT.value.char), envir = parent.frame())
 		}else{
-		studysideMessage<-"ERROR: If LENGTH.OUT.value.char is non-NULL, it must specify a positive integer in inverted commas eg '14'" 
+		studysideMessage <- "ERROR: If LENGTH.OUT.value.char is non-NULL, it must specify a positive integer in inverted commas eg '14'"
+		span$set_status("error", studysideMessage)
 		stop(studysideMessage, call. = FALSE)
 		}
 	}
@@ -112,7 +118,8 @@ nfilter.subset<-as.numeric(thr$nfilter.subset)                          #
 		if(is.character(ALONG.WITH.name)){
 		ALONG.WITH<-eval(parse(text=ALONG.WITH.name), envir = parent.frame())
 		}else{
-		studysideMessage<-"ERROR: If ALONG.WITH.name is non-NULL, it must specify the name of a serverside vector in inverted commas" 
+		studysideMessage <- "ERROR: If ALONG.WITH.name is non-NULL, it must specify the name of a serverside vector in inverted commas"
+		span$set_status("error", studysideMessage)
 		stop(studysideMessage, call. = FALSE)
 		}
 	}

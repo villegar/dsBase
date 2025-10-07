@@ -28,6 +28,8 @@
 #' @export
 #'
 scatterPlotDS <- function(x, y, method.indicator, k, noise){
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
   
   ###################################################################
   # MODULE 1: CAPTURE THE nfilter SETTINGS                          #
@@ -72,7 +74,9 @@ scatterPlotDS <- function(x, y, method.indicator, k, noise){
     # Check if k is integer and has a value greater than or equal to the pre-specified threshold
     # and less than or equal to the length of rows of data.complete minus the pre-specified threshold
     if(k < nfilter.kNN | k > (N.data - nfilter.kNN)){
-      stop(paste0("k must be greater than or equal to ", nfilter.kNN, "and less than or equal to ", (N.data-nfilter.kNN), "."), call.=FALSE)
+      studysideMessage <- paste0("k must be greater than or equal to ", nfilter.kNN, "and less than or equal to ", (N.data-nfilter.kNN), ".")
+      span$set_status("error", studysideMessage)
+      stop(studysideMessage, call. = FALSE)
     }else{
       neighbours = k
     }
@@ -114,7 +118,9 @@ scatterPlotDS <- function(x, y, method.indicator, k, noise){
     # and is used as the variance of the embedded noise is a greater
     # than the minimum threshold specified in the filter 'nfilter.noise'
     if(noise < nfilter.noise){
-      stop(paste0("'noise' must be greater than or equal to ", nfilter.noise), call.=FALSE)
+      studysideMessage <- paste0("'noise' must be greater than or equal to ", nfilter.noise)
+      span$set_status("error", studysideMessage)
+      stop(studysideMessage, call. = FALSE)
     }else{
       percentage <- noise
     }
@@ -122,7 +128,9 @@ scatterPlotDS <- function(x, y, method.indicator, k, noise){
     # the study-specific seed for random number generation
     seed <- getOption("datashield.seed")
     if (is.null(seed)){
-      stop("scatterPlotDS requires 'datashield.seed' R option to operate", call.=FALSE)
+      studysideMessage <- "scatterPlotDS requires 'datashield.seed' R option to operate"
+      span$set_status("error", studysideMessage)
+      stop(studysideMessage, call. = FALSE)
     }else{
       set.seed(seed)
       x.new <- x + stats::rnorm(n=N.data, mean=0, sd=sqrt(percentage*stats::var(x)))

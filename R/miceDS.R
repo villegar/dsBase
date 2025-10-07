@@ -49,6 +49,8 @@
 miceDS <- function(data=data, m=m, maxit=maxit, method=method, post=post, seed=seed,
                    predictorMatrix=predictorMatrix, ncol.pred.mat=ncol.pred.mat,
                    newobj_mids=newobj_mids, newobj_df=newobj_df){
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
 
   if(seed %in% c(NA, 'NA')){
     seed <- NA
@@ -77,7 +79,9 @@ miceDS <- function(data=data, m=m, maxit=maxit, method=method, post=post, seed=s
   if(!is.null(ncol.pred.mat)){
     predictorMatrix <- as.numeric(unlist(strsplit(predictorMatrix, split=",")))
     if(!all(predictorMatrix %in% 0:1)){
-      stop("The predictorMatrix should contains only 0/1 values", call. = FALSE)
+      studysideMessage <- "The predictorMatrix should contains only 0/1 values"
+      span$set_status("error", studysideMessage)
+      stop(studysideMessage, call. = FALSE)
     }
     predictorMatrix <- matrix(predictorMatrix, ncol=ncol.pred.mat)
   }else{

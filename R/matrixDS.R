@@ -25,6 +25,8 @@
 #' @export
 #'
 matrixDS <- function(mdata.transmit, from, nrows.transmit, ncols.transmit, byrow, dimnames){
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
 
 #########################################################################
 # DataSHIELD MODULE: CAPTURE THE nfilter SETTINGS                       #
@@ -43,9 +45,8 @@ length.mdata.transmit<-length(strsplit(mdata.transmit,''))
 
 if(length.mdata.transmit>nfilter.stringShort)
 	{
-	studysideMessage<-
-	paste0("FAILED: mdata.transmit is too long it could hide concealed code, please shorten to <= nfilter.stringShort = ",
-	       nfilter.stringShort," characters")
+	studysideMessage <- paste0("FAILED: mdata.transmit is too long it could hide concealed code, please shorten to <= nfilter.stringShort = ", nfilter.stringShort, " characters")
+	span$set_status("error", studysideMessage)
 	stop(studysideMessage, call. = FALSE)
 	}
 
@@ -54,9 +55,8 @@ if(length.mdata.transmit>nfilter.stringShort)
 
 if(length.nrows.transmit>nfilter.stringShort)
 	{
-	studysideMessage<-
-	paste0("FAILED: nrows.transmit is too long it could hide concealed code, please shorten to <= nfilter.stringShort = ",
-	       nfilter.stringShort," characters")
+	studysideMessage <- paste0("FAILED: nrows.transmit is too long it could hide concealed code, please shorten to <= nfilter.stringShort = ", nfilter.stringShort, " characters")
+	span$set_status("error", studysideMessage)
 	stop(studysideMessage, call. = FALSE)
 	}
 
@@ -65,9 +65,8 @@ if(length.nrows.transmit>nfilter.stringShort)
 
 if(length.ncols.transmit>nfilter.stringShort)
 	{
-	studysideMessage<-
-	paste0("FAILED: ncols.transmit is too long it could hide concealed code, please shorten to <= nfilter.stringShort = ",
-	       nfilter.stringShort," characters")
+	studysideMessage <- paste0("FAILED: ncols.transmit is too long it could hide concealed code, please shorten to <= nfilter.stringShort = ", nfilter.stringShort, " characters")
+	span$set_status("error", studysideMessage)
 	stop(studysideMessage, call. = FALSE)
 	}
 
@@ -80,9 +79,8 @@ if(!is.null(dimnames))
 
 		if(length.dimnames>(2*nfilter.string))
 		{
-		studysideMessage<-
-		paste0("FAILED: dimnames is too long it could hide concealed code, please shorten to <= 2 x nfilter.string = ",
-			(nfilter.string*2)," characters")
+		studysideMessage <- paste0("FAILED: dimnames is too long it could hide concealed code, please shorten to <= 2 x nfilter.string = ", (nfilter.string*2), " characters")
+		span$set_status("error", studysideMessage)
 		stop(studysideMessage, call. = FALSE)
 		}
 	}
@@ -126,7 +124,8 @@ ncols<-as.numeric(ncols.c)
 
 if(nrows==-9||ncols==-9)
 	{
-	studysideMessage<-"FAILED: must specify both nrows.scalar and ncols.scalar as positive integers"
+	studysideMessage <- "FAILED: must specify both nrows.scalar and ncols.scalar as positive integers"
+	span$set_status("error", studysideMessage)
 	stop(studysideMessage, call. = FALSE)
 	}
 
@@ -150,7 +149,8 @@ if(nrows==-9||ncols==-9)
 
   if(from!="serverside.vector"&&from!="serverside.scalar"&&from!="clientside.scalar")
 	  {
-			studysideMessage<-paste0("FAILED: the <from> argument specified is not valid, please respecify")
+			studysideMessage <- paste0("FAILED: the <from> argument specified is not valid, please respecify")
+			span$set_status("error", studysideMessage)
 			stop(studysideMessage, call. = FALSE)
 	  }
 

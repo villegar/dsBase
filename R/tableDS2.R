@@ -30,6 +30,8 @@
 #' @author Paul Burton for DataSHIELD Development Team, 13/11/2019
 #' @export
 tableDS2 <- function(newobj,rvar.transmit,cvar.transmit,stvar.transmit){
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
 
 
 calltext1<-paste0("out.table.real<-",newobj,"[[2]]")

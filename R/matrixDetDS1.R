@@ -14,7 +14,9 @@
 #' @export
 
 matrixDetDS1 <- function(M1.name=NULL,logarithm){
-
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
+  
 #########################################################################
 # DataSHIELD MODULE: CAPTURE THE nfilter SETTINGS                       #
 thr<-dsBase::listDisclosureSettingsDS()                                 #
@@ -32,10 +34,9 @@ length.M1.name<-length(unlist(strsplit(M1.name,'')))
 
 if(length.M1.name>nfilter.stringShort)
 	{
-	error.message<-
-	paste0("FAILED: M1.name is too long it could hide concealed code, please shorten to <= nfilter.stringShort = ",
-	       nfilter.stringShort," characters")
-	stop(error.message, call. = FALSE)
+  studysideMessage <- paste0("FAILED: M1.name is too long it could hide concealed code, please shorten to <= nfilter.stringShort = ", nfilter.stringShort," characters")
+  span$set_status("error", studysideMessage)
+	stop(studysideMessage, call. = FALSE)
 	}
 
 #EVAL M1
@@ -44,8 +45,9 @@ M1<-eval(parse(text=M1.name), envir = parent.frame())
 
 if(!is.matrix(M1)&&!is.data.frame(M1))
 	{
-	error.message<-"FAILED: M1 must be of class matrix or data.frame, please respecify"
-	stop(error.message, call. = FALSE)
+	studysideMessage <- "FAILED: M1 must be of class matrix or data.frame, please respecify"
+	span$set_status("error", studysideMessage)
+	stop(studysideMessage, call. = FALSE)
 	}
 
 #coerce to matrix if a data.frame
@@ -58,8 +60,9 @@ if(is.data.frame(M1))
 #Check dimensions valid
 if(ncol(M1)!=nrow(M1))
 	{
-	error.message<-"FAILED: invalid dimensions M1 must be square: ncol must equal nrow, please respecify"
-	stop(error.message, call. = FALSE)
+	studysideMessage <- "FAILED: invalid dimensions M1 must be square: ncol must equal nrow, please respecify"
+	span$set_status("error", studysideMessage)
+	stop(studysideMessage, call. = FALSE)
 	}
 
 

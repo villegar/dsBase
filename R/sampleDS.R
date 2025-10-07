@@ -32,6 +32,8 @@
 #' @author Paul Burton, for DataSHIELD Development Team, 15/4/2020
 #' @export
 sampleDS <- function(x.transmit, size.transmit, replace.transmit=NULL, prob.transmit=NULL){
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
   
   #########################################################################
   # DataSHIELD MODULE: CAPTURE THE nfilter SETTINGS                       #
@@ -59,7 +61,8 @@ sampleDS <- function(x.transmit, size.transmit, replace.transmit=NULL, prob.tran
   
   if(!string.safe)
   {
-     studysideMessage<-"FAILED: the character string denoting the argument <x> is too long and may be disclosive - please shorten"
+     studysideMessage <- "FAILED: the character string denoting the argument <x> is too long and may be disclosive - please shorten"
+     span$set_status("error", studysideMessage)
      stop(studysideMessage, call. = FALSE)
   }
   
@@ -75,7 +78,8 @@ sampleDS <- function(x.transmit, size.transmit, replace.transmit=NULL, prob.tran
   
   if(!string.safe)
   {
-     studysideMessage<-"FAILED: the character string denoting the argument <prob> is too long and may be disclosive - please shorten"
+     studysideMessage <- "FAILED: the character string denoting the argument <prob> is too long and may be disclosive - please shorten"
+     span$set_status("error", studysideMessage)
      stop(studysideMessage, call. = FALSE)
   }
   
@@ -112,7 +116,8 @@ sampleDS <- function(x.transmit, size.transmit, replace.transmit=NULL, prob.tran
   {
   	if(size.transmit>object.length)
   	{
-  	studysideMessage<-"FAILED: if sampling without replacement size must be less than or equal to length(x)"
+  	studysideMessage <- "FAILED: if sampling without replacement size must be less than or equal to length(x)"
+  	span$set_status("error", studysideMessage)
   	stop(studysideMessage, call. = FALSE)
   	}
   }
@@ -121,7 +126,8 @@ sampleDS <- function(x.transmit, size.transmit, replace.transmit=NULL, prob.tran
   {
   	if(size.transmit>x.active)
   	{
-  	studysideMessage<-"FAILED: if sampling without replacement size must be less than or equal to x"
+  	studysideMessage <- "FAILED: if sampling without replacement size must be less than or equal to x"
+  	span$set_status("error", studysideMessage)
   	stop(studysideMessage, call. = FALSE)
   	}
   
@@ -132,15 +138,16 @@ sampleDS <- function(x.transmit, size.transmit, replace.transmit=NULL, prob.tran
   complementary.subset.length<-object.length-size.transmit
   if(subset.length<nfilter.subset && subset.length!=0 && subset.length!=object.length)
   	{
-  	studysideMessage<-"FAILED: disclosure risk, as the length of the subset to be created is less than nfilter.subset"
+  	studysideMessage <- "FAILED: disclosure risk, as the length of the subset to be created is less than nfilter.subset"
+  	span$set_status("error", studysideMessage)
   	stop(studysideMessage, call. = FALSE)
   	}
   	
   if(complementary.subset.length<nfilter.subset&& subset.length!=0 && subset.length!=object.length)
   	{
-  	studysideMessage<-"FAILED: disclosure risk using differencing: original object length minus subset length less than nfilter.subset"
+  	studysideMessage <- "FAILED: disclosure risk using differencing: original object length minus subset length less than nfilter.subset"
+  	span$set_status("error", studysideMessage)
   	stop(studysideMessage, call. = FALSE)
-  
   	}
   }
   
@@ -160,7 +167,8 @@ sampleDS <- function(x.transmit, size.transmit, replace.transmit=NULL, prob.tran
   {
   	if(size.transmit>object.length)
   	{
-  	studysideMessage<-"FAILED: if sampling without replacement size must be less than or equal to length(x)"
+  	studysideMessage <- "FAILED: if sampling without replacement size must be less than or equal to length(x)"
+  	span$set_status("error", studysideMessage)
   	stop(studysideMessage, call. = FALSE)
   	}
   }
@@ -169,7 +177,8 @@ sampleDS <- function(x.transmit, size.transmit, replace.transmit=NULL, prob.tran
   {
   	if(size.transmit>x.active)
   	{
-  	studysideMessage<-"FAILED: if sampling without replacement size must be less than or equal to x"
+  	studysideMessage <- "FAILED: if sampling without replacement size must be less than or equal to x"
+  	span$set_status("error", studysideMessage)
   	stop(studysideMessage, call. = FALSE)
   	}
   

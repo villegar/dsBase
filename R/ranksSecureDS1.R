@@ -20,6 +20,8 @@
 #' @author Paul Burton 9th November, 2021
 #' @export
 ranksSecureDS1 <- function(){ #START FUNC
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
 
 sR2.df<-blackbox.output.df[,c(2,7)]
 

@@ -22,6 +22,8 @@
 #' @export
 #' 
 igb_standardsDS <- function(gagebrth=gagebrth, z=z, p=p, val=val, var=var, sex=sex, fun=fun){
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
   
     ## Internal function #1: igb_centile2value
     igb_centile2value <- function(gagebrth, p = 50, var = "lencm", sex = "Female") {

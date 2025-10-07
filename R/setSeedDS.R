@@ -35,6 +35,9 @@
 #' @export
 setSeedDS<-function (seedtext=NULL, kind = NULL, normal.kind = NULL)
 {
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
+  
     # Check Permissive Privacy Control Level.
     dsBase::checkPermissivePrivacyControlLevel(c('permissive', 'avocado'))
 

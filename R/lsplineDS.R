@@ -18,6 +18,8 @@
 #' @export
 #'
 lsplineDS <- function(x = x, knots = NULL, marginal = FALSE, names = NULL){
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
   
   # DataSHIELD MODULE: CAPTURE THE nfilter SETTINGS
   thr <- dsBase::listDisclosureSettingsDS()
@@ -57,7 +59,9 @@ lsplineDS <- function(x = x, knots = NULL, marginal = FALSE, names = NULL){
   
   for(i in 1:ncol(out)){
     if(length(unique(out[,i])) <= nfilter.tab){
-      stop(paste0("One of the spline segments has less than ", nfilter.tab, " observations. Please redefine the knot positions"), call.=FALSE)
+      studysideMessage <- paste0("One of the spline segments has less than ", nfilter.tab, " observations. Please redefine the knot positions")
+      span$set_status("error", studysideMessage)
+      stop(studysideMessage, call.=FALSE)
     }
   }
   

@@ -29,6 +29,8 @@
 #' @author Paul Burton 9th November, 2021
 #' @export
 ranksSecureDS2 <- function(){ #START FUNC
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
 
 ########################################################################## 
 ##########################################################################
@@ -69,11 +71,9 @@ if(nrow(blackbox.output.df)!=nrow(sR4.df)){
   df.equivalent<-0
   }
 if(df.equivalent==0){
-error.message<-
-  paste0("FAILED: in at least one study, data frame before global ranking has
-  a different number of rows to data.frame after global ranking. Please explore
-  and correct whatever may have caused this")
-stop(error.message, call. = FALSE)
+studysideMessage <- paste0("FAILED: in at least one study, data frame before global ranking has a different number of rows to data.frame after global ranking. Please explore and correct whatever may have caused this")
+span$set_status("error", studysideMessage)
+stop(studysideMessage, call. = FALSE)
 }
 
 if(sum(round(abs(blackbox.output.df$encrypted.var-sR4.df$encrypted.var),2))>0){
@@ -81,11 +81,9 @@ if(sum(round(abs(blackbox.output.df$encrypted.var-sR4.df$encrypted.var),2))>0){
 }
 
 if(df.equivalent==0){
-  error.message<-
-    paste0("FAILED: in at least one study, data frame before global ranking is 
-  in a different order to the data.frame after global ranking. Please explore
-  and correct whatever may have caused this")
-  stop(error.message, call. = FALSE)
+  studysideMessage <- paste0("FAILED: in at least one study, data frame before global ranking is in a different order to the data.frame after global ranking. Please explore and correct whatever may have caused this")
+  span$set_status("error", studysideMessage)
+  stop(studysideMessage, call. = FALSE)
 }
 
   

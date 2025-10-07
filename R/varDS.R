@@ -12,6 +12,8 @@
 #' @export
 #'
 varDS <- function(xvect){
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
 
   #############################################################
   # MODULE 1: CAPTURE THE nfilter SETTINGS
@@ -33,6 +35,7 @@ varDS <- function(xvect){
     out.sum <- NA
     out.sumSquares <- NA
     studysideMessage <- "FAILED: Nvalid less than nfilter.tab"
+    span$set_status("error", studysideMessage)
     stop(studysideMessage, call. = FALSE)
   }
 

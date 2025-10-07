@@ -29,6 +29,8 @@
 #' @export
 #'
 recodeValuesDS <- function(var.name.text=NULL, values2replace.text=NULL, new.values.text=NULL, missing=NULL){
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
   
   # Check Permissive Privacy Control Level.
   dsBase::checkPermissivePrivacyControlLevel(c('permissive', 'banana', 'carrot'))
@@ -44,18 +46,21 @@ recodeValuesDS <- function(var.name.text=NULL, values2replace.text=NULL, new.val
   var.name.text.chars <- strsplit(var.name.text, split="")
   if(length(var.name.text.chars[[1]]) > nfilter.stringShort){
      studysideMessage <- "Error: var.name.text argument too long (see nfilter.stringShort)"
+     span$set_status("error", studysideMessage)
      stop(studysideMessage, call. = FALSE)
   }
   
   values2replace.text.chars <- strsplit(values2replace.text, split="")
   if(length(values2replace.text.chars[[1]]) > nfilter.stringShort){
     studysideMessage <- "Error: values2replace.text argument too long (see nfilter.stringShort)"
+    span$set_status("error", studysideMessage)
     stop(studysideMessage, call. = FALSE)
   }
   
   new.values.text.chars <- strsplit(new.values.text, split="")
   if(length(new.values.text.chars[[1]]) > nfilter.stringShort){
     studysideMessage <- "Error: new.values.text argument too long (see nfilter.stringShort)"
+    span$set_status("error", studysideMessage)
     stop(studysideMessage, call. = FALSE)
   }
 
@@ -73,6 +78,7 @@ recodeValuesDS <- function(var.name.text=NULL, values2replace.text=NULL, new.val
   # stop and return an error message
   if (!(var.class %in% c('factor', 'character', 'numeric', 'integer'))){
     studysideMessage <- "Error: The variable to recode must be either a factor, a character, a numeric or an integer"
+    span$set_status("error", studysideMessage)
     stop(studysideMessage, call. = FALSE)
   }
   
@@ -120,6 +126,7 @@ recodeValuesDS <- function(var.name.text=NULL, values2replace.text=NULL, new.val
   # AND RETURN MESSAGE
   if(non.NA.length.recoded < nfilter.subset){
      studysideMessage <- "Error: number of non-NA elements of recoded vector < minimum subset size"
+     span$set_status("error", studysideMessage)
      stop(studysideMessage, call. = FALSE)
   }
   

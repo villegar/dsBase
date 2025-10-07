@@ -11,6 +11,9 @@
 #' @author Gaye, A.
 #'
 setFilterDS <- function(x=getOption("datashield.privacyLevel", default=5)){
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
+  
   a <- as.numeric(as.character(x))
   return(a)
 }

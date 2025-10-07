@@ -41,6 +41,8 @@
 #' @author Demetris Avraam, Paul Burton for DataSHIELD Development Team
 #' @export
 reShapeDS <- function(data.name, varying.transmit, v.names.transmit, timevar.name, idvar.name, drop.transmit, direction, sep){
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
   
   # Check Permissive Privacy Control Level.
   dsBase::checkPermissivePrivacyControlLevel(c('permissive', 'banana', 'carrot'))
@@ -52,9 +54,6 @@ reShapeDS <- function(data.name, varying.transmit, v.names.transmit, timevar.nam
   idvar <- idvar.name
   direction <- direction
   sep <- sep
-
-
-
 
   if(!is.null(varying.transmit)){
   varying<-unlist(strsplit(varying.transmit, split=","))
@@ -68,14 +67,11 @@ reShapeDS <- function(data.name, varying.transmit, v.names.transmit, timevar.nam
   v.names<-NULL
   }
 
-
   if(!is.null(drop.transmit)){
     drop<-unlist(strsplit(drop.transmit, split=","))
   }else{
     drop<-NULL
   }
-
-
 
   split = if (sep == "") {
     list(regexp = "[A-Za-z][0-9]", include = TRUE)
@@ -99,10 +95,7 @@ reShapeDS <- function(data.name, varying.transmit, v.names.transmit, timevar.nam
                              direction=direction)
  }
 
-
   return(output)
-
-
 }
 #Assign function
 # reShapeDS

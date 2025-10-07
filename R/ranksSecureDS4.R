@@ -38,6 +38,8 @@
 #' @author Paul Burton 9th November, 2021
 #' @export
 ranksSecureDS4 <- function(ranks.sort.by){ #START FUNC
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
 
 sR8.df<-cbind(blackbox.ranks.df,global.ranks.quantiles.df$real.ranks.global,global.ranks.quantiles.df$real.quantiles.global)
 colnames(sR8.df)[ncol(sR8.df)-1]<-"final.ranks.global"
@@ -46,9 +48,9 @@ colnames(sR8.df)[ncol(sR8.df)]<-"final.quantiles.global"
 ord.by.ID.orig<-order(sR8.df$ID.seq.real.orig)
 
 if(ranks.sort.by!="ID.orig" && ranks.sort.by!="vals.orig"){
-    error.message<-
-      paste0("FAILED: ranks.sort.by must be specified as either 'ID.orig' or 'vals.orig'")
-    stop(error.message, call. = FALSE)
+    studysideMessage <- paste0("FAILED: ranks.sort.by must be specified as either 'ID.orig' or 'vals.orig'")
+    span$set_status("error", studysideMessage)
+    stop(studysideMessage, call. = FALSE)
 }
 
 if(ranks.sort.by=="ID.orig")
@@ -68,12 +70,13 @@ if((length(sR8.df$global.ranks.input.from.sR5)!=lenx)||
    (length(sR8.df$final.ranks.global)!=lenx)||
    (length(sR8.df$final.quantiles.global)!=lenx))
 {
-  error.message<-
+  studysideMessage <- 
     paste0("FAILED: ranking components of different lengths. This could reflect
             modification of the clientside code which is not recommended. It can
             also occur if the R session on one or more of the opal data servers
             runs out of memory")
-  stop(error.message, call. = FALSE)
+  span$set_status("error", studysideMessage)
+  stop(studysideMessage, call. = FALSE)
 }  
 
 ranks.consistent<-1
@@ -92,13 +95,14 @@ if(sum(round(rank(sR8.df$global.ranks.input.from.sR5)-rank(sR8.df$final.quantile
 
 if(ranks.consistent==0)
 {
-  error.message<-
+  studysideMessage <- 
     paste0("FAILED: inconsistent ranking across different components of ranking matrix,
             try a different seed. Altenatively this could reflect modification of the
             clientside code which is not recommended. Finally, it can also occur
             if the R session on one or more of the opal data servers runs out
             of memory")
-  stop(error.message, call. = FALSE)
+  span$set_status("error", studysideMessage)
+  stop(studysideMessage, call. = FALSE)
 }
 
 return(sR8.df)

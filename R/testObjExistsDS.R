@@ -14,6 +14,8 @@
 #' @export
 #'
 testObjExistsDS <- function(test.obj.name=NULL){
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
 
   test.obj.exists <- FALSE
   test.obj.class <- NULL

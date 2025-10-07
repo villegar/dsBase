@@ -8,6 +8,9 @@
 #' @export
 #'
 rangeDS <- function(xvect) {
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
+  
   # back-up current .Random.seed and revert on.exit
   if (exists(x = ".Random.seed", envir = globalenv())) {
       assign(x = ".old_seed", value = .Random.seed, envir = parent.frame());
@@ -22,7 +25,9 @@ rangeDS <- function(xvect) {
     # the study-specific seed for random number generation
     seed <- getOption("datashield.seed")
     if (is.null(seed)) {
-      stop("rangeDS requires 'datashield.seed' R option to operate", call. = FALSE)
+      studysideMessage <- "rangeDS requires 'datashield.seed' R option to operate"
+      span$set_status("error", studysideMessage)
+      stop(studysideMessage, call. = FALSE)
     }
     set.seed(seed)
 

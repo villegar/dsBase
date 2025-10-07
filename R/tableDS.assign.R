@@ -36,6 +36,8 @@
 #' @export
 tableDS.assign<-function(rvar.transmit, cvar.transmit, stvar.transmit, rvar.all.unique.levels.transmit, cvar.all.unique.levels.transmit,
                   stvar.all.unique.levels.transmit, exclude.transmit, useNA.transmit){
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
 
 #Activate via eval when needed
 #rvar

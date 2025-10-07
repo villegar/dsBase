@@ -19,6 +19,9 @@
 #' @author Paul Burton for DataSHIELD Development Team
 #' @export
 matrixDiagDS <- function(x1.transmit,aim,nrows.transmit){
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
+  
 #########################################################################
 # DataSHIELD MODULE: CAPTURE THE nfilter SETTINGS                       #
 thr<-dsBase::listDisclosureSettingsDS()                                 #
@@ -42,9 +45,8 @@ nfilter.string.long<-5*nfilter.string
 
 if(length.x1.transmit>nfilter.string.long)
 	{
-	studysideMessage<-
-	paste0("FAILED: x1.transmit is too long it could hide concealed code, please shorten to <= nfilter.string*5 = ",
-	       nfilter.string.long," characters")
+	studysideMessage <- paste0("FAILED: x1.transmit is too long it could hide concealed code, please shorten to <= nfilter.string*5 = ", nfilter.string.long, " characters")
+	span$set_status("error", studysideMessage)
 	stop(studysideMessage, call. = FALSE)
 	}
 
@@ -53,9 +55,8 @@ length.nrows.transmit<-length(unlist(strsplit(nrows.transmit,'')))
 
 if(length.nrows.transmit>nfilter.stringShort)
 	{
-	studysideMessage<-
-	paste0("FAILED: nrows.transmit is too long it could hide concealed code, please shorten to <= nfilter.stringShort = ",
-	       nfilter.stringShort," characters")
+	studysideMessage <-	paste0("FAILED: nrows.transmit is too long it could hide concealed code, please shorten to <= nfilter.stringShort = ", nfilter.stringShort, " characters")
+	span$set_status("error", studysideMessage)
 	stop(studysideMessage, call. = FALSE)
 	}
 
@@ -110,8 +111,8 @@ nrows<-as.numeric(nrows.c)
 		{
 		if(nrows==-9)
 			{
-			studysideMessage<-
-			paste0("FAILED: if x1 is a scalar you must specify argument <nrows> as an integer to fix matrix dimensions")
+			studysideMessage <- paste0("FAILED: if x1 is a scalar you must specify argument <nrows> as an integer to fix matrix dimensions")
+			span$set_status("error", studysideMessage)
 			stop(studysideMessage, call. = FALSE)
 			}
 			else
@@ -123,7 +124,8 @@ nrows<-as.numeric(nrows.c)
   if(aim!="serverside.vector.2.matrix"&&aim!="serverside.scalar.2.matrix"&&aim!="serverside.matrix.2.vector"&&
       aim!="clientside.vector.2.matrix"&&aim!="clientside.scalar.2.matrix")
 	  {
-			studysideMessage<-paste0("FAILED: the aim specified is not valid, please respecify")
+			studysideMessage <- paste0("FAILED: the aim specified is not valid, please respecify")
+			span$set_status("error", studysideMessage)
 			stop(studysideMessage, call. = FALSE)
 	  }
 

@@ -31,6 +31,8 @@
 #' @author Paul Burton 9th November, 2021
 #' @export
 ranksSecureDS3 <- function(){ #START FUNC
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
 
 sR6.df<-data.frame(cbind(blackbox.ranks.df[,9],1:nrow(blackbox.ranks.df),blackbox.ranks.df[,7]))
 colnames(sR6.df)<-c("encrypted.ranks","ID.real.by.val","studyid")

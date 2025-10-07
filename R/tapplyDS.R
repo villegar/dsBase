@@ -15,6 +15,8 @@
 #' @author Paul Burton, Demetris Avraam for DataSHIELD Development Team
 #' @export
 tapplyDS <- function(X.name, INDEX.names.transmit, FUN.name){
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
 
   # DataSHIELD MODULE: CAPTURE THE nfilter SETTINGS
   thr <- dsBase::listDisclosureSettingsDS()
@@ -25,6 +27,7 @@ tapplyDS <- function(X.name, INDEX.names.transmit, FUN.name){
 	  X <- eval(parse(text=X.name), envir = parent.frame())
 	}else{
     studysideMessage <- "ERROR: X.name must be specified as a character string"
+    span$set_status("error", studysideMessage)
     stop(studysideMessage, call. = FALSE)
   }
 
@@ -46,8 +49,9 @@ tapplyDS <- function(X.name, INDEX.names.transmit, FUN.name){
   
   for(h in 1:num.factors){
     if(length.2.test!=length.test.vector[h]){
-      return.message <- "Error: the output variable and all indexing factors must be of equal length"
-      stop(return.message, call. = FALSE)
+      studysideMessage <- "Error: the output variable and all indexing factors must be of equal length"
+      span$set_status("error", studysideMessage)
+      stop(studysideMessage, call. = FALSE)
     }  
   }
 
@@ -80,8 +84,9 @@ tapplyDS <- function(X.name, INDEX.names.transmit, FUN.name){
   N.count <- tapply(X.complete, INDEX, base::length)
 
   if(min(N.count) < nfilter.tab && min(N.count) > 0){
-    return.message<-"ERROR: at least one group defined by INDEX has < nfilter.tab members. The output cannot therefore be returned to the clientside. But the function ds.tapply.assign may still be used to write the output to the data servers with no clientside return"
-    stop(return.message, call. = FALSE)
+    studysideMessage <- "ERROR: at least one group defined by INDEX has < nfilter.tab members. The output cannot therefore be returned to the clientside. But the function ds.tapply.assign may still be used to write the output to the data servers with no clientside return"
+    span$set_status("error", studysideMessage)
+    stop(studysideMessage, call. = FALSE)
   }
 
   #################
@@ -238,6 +243,7 @@ tapplyDS <- function(X.name, INDEX.names.transmit, FUN.name){
     
     if(num.factors > 1){
       studysideMessage <- "Quantile will only work with one indexing factor but you can combine several factors into one. e.g. two factors with f1 and f2 levels respectively can be combined into one with f1 x f2 levels"
+      span$set_status("error", studysideMessage)
       stop(studysideMessage, call. = FALSE)
     }
     probs.vector <- c(0.05,0.1,0.2,0.25,0.3,0.33,0.4,0.5,0.6,0.67,0.7,0.75,0.8,0.9,0.95)

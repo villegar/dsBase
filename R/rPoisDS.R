@@ -22,6 +22,8 @@
 #' @author Paul Burton for DataSHIELD Development Team
 #' @export
 rPoisDS<-function (n, lambda = 1){
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
 
         # Check Permissive Privacy Control Level.
         dsBase::checkPermissivePrivacyControlLevel(c('permissive', 'avocado'))

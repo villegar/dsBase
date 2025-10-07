@@ -19,6 +19,8 @@
 #' @export
 #'
 minMaxRandDS <- function(input.var.name){ #START FUNC
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
   
   # back-up current .Random.seed and revert on.exit
   if (exists(x = ".Random.seed", envir = globalenv())) {

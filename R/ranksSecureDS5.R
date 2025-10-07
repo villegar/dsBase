@@ -38,6 +38,9 @@
 #' @author Paul Burton 9th November, 2021
 #' @export
 ranksSecureDS5 <- function(output.ranks.df){ #START FUNC
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
+  
 final.summary.df <- eval(parse(text=output.ranks.df), envir = parent.frame())
 
 

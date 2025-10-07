@@ -12,6 +12,8 @@
 #' @export
 #'
 sqrtDS <- function(x){
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
 
   x.var <- eval(parse(text=x), envir = parent.frame())
 

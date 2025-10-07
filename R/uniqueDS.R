@@ -9,18 +9,30 @@
 #' @export
 #'
 uniqueDS <- function(x.name.transmit = NULL){
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
+  
     # Check 'x.name.transmit' contains a name
-    if (is.null(x.name.transmit))
-        stop("Variable's name can't be NULL", call. = FALSE)
+    if (is.null(x.name.transmit)) {
+      studysideMessage <- "Variable's name can't be NULL"
+      span$set_status("error", studysideMessage)
+      stop(studysideMessage, call. = FALSE)
+    }
 
-    if ((! is.character(x.name.transmit)) || (length(x.name.transmit) != 1))
-        stop("Variable's name isn't a single character vector", call. = FALSE)
+    if ((! is.character(x.name.transmit)) || (length(x.name.transmit) != 1)) {
+      studysideMessage <- "Variable's name isn't a single character vector"
+      span$set_status("error", studysideMessage)
+      stop(studysideMessage, call. = FALSE)
+    }
 
     # Check object exists
     x.value <- eval(parse(text=x.name.transmit), envir = parent.frame())
 
-    if (is.null(x.value))
-        stop("Variable can't be NULL", call. = FALSE)
+    if (is.null(x.value)) {
+      studysideMessage <- "Variable can't be NULL"
+      span$set_status("error", studysideMessage)
+      stop(studysideMessage, call. = FALSE)
+    }
 
     # Compute the unique's value
     out <- base::unique(x.value)

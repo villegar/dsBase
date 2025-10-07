@@ -22,6 +22,9 @@
 
 rmDS <- function(x.names.transmit)
 {
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
+  
     #convert x.names.transmit format from transmittable to actionable form (a vector of character strings)
     x.names<-unlist(strsplit(x.names.transmit, split=","))
     

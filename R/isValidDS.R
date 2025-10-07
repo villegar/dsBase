@@ -8,6 +8,8 @@
 #'@export
 #'
 isValidDS <- function(obj) {
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
   
   # this filter sets the minimum number of observations that are allowed 
 

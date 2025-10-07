@@ -34,6 +34,8 @@
 #' @author Paul Burton for DataSHIELD Development Team
 #' @export
 rbindDS<-function(x.names.transmit=NULL,colnames.transmit=NULL){
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
   
   # Check Permissive Privacy Control Level.
   dsBase::checkPermissivePrivacyControlLevel(c('permissive', 'banana'))

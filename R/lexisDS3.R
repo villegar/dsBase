@@ -13,6 +13,8 @@
 #' @export
 #'
 lexisDS3 <- function(){
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
 
   outobj <- data.frame(base::get("messageobj", envir = parent.frame())$expanded.table)
 

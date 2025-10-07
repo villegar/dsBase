@@ -11,6 +11,9 @@
 #' @author Gaye, A.
 #'
 subsetByClassHelper1 <- function(xvect=NULL, xname=NULL, filter=NULL){
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
+  
   vectname <- xname
   subsets <- list()
   names.of.subsets <- c()

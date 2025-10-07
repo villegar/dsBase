@@ -12,6 +12,9 @@
 #' @export
 #'
 matrixTransposeDS <- function(M1.name=NULL){
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
+  
 #########################################################################
 # DataSHIELD MODULE: CAPTURE THE nfilter SETTINGS                       #
 thr<-dsBase::listDisclosureSettingsDS()                                 #
@@ -29,9 +32,8 @@ length.M1.name<-length(unlist(strsplit(M1.name,'')))
 
 if(length.M1.name>nfilter.stringShort)
 	{
-	studysideMessage<-
-	paste0("FAILED: M1.name is too long it could hide concealed code, please shorten to <= nfilter.stringShort = ",
-	       nfilter.stringShort," characters")
+	studysideMessage <- paste0("FAILED: M1.name is too long it could hide concealed code, please shorten to <= nfilter.stringShort = ", nfilter.stringShort, " characters")
+	span$set_status("error", studysideMessage)
 	stop(studysideMessage, call. = FALSE)
 	}
 
@@ -42,7 +44,8 @@ M1<-eval(parse(text=M1.name), envir = parent.frame())
 
 if(!is.matrix(M1)&&!is.data.frame(M1))
 	{
-	studysideMessage<-"FAILED: M1 must be of class matrix or data.frame, please respecify"
+	studysideMessage <- "FAILED: M1 must be of class matrix or data.frame, please respecify"
+	span$set_status("error", studysideMessage)
 	stop(studysideMessage, call. = FALSE)
 	}
 

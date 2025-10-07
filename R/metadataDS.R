@@ -10,16 +10,28 @@
 #'
 metadataDS <- function(x)
 {
-    if (is.null(x))
-        stop("Variable's name can't be NULL", call. = FALSE)
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
+  
+    if (is.null(x)) {
+      studysideMessage <- "Variable's name can't be NULL"
+      span$set_status("error", studysideMessage)
+      stop(studysideMessage, call. = FALSE)
+    }
 
-    if ((! is.character(x)) || (length(x) != 1))
-        stop("Variable's name isn't be single character vector", call. = FALSE)
+    if ((! is.character(x)) || (length(x) != 1)) {
+      studysideMessage <- "Variable's name isn't be single character vector"
+      span$set_status("error", studysideMessage)
+      stop(studysideMessage, call. = FALSE)
+    }
 
     x.var <- eval(parse(text=x), envir = parent.frame())
 
-    if (is.null(x.var))
-        stop("Variable can't be NULL", call. = FALSE)
+    if (is.null(x.var)) {
+      studysideMessage <- "Variable can't be NULL"
+      span$set_status("error", studysideMessage)
+      stop(studysideMessage, call. = FALSE)
+    }
 
     # find the metadata specified variable
     metadata_attributes       <- attributes(x.var)

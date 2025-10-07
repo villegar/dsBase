@@ -14,6 +14,8 @@
 #' @export
 #'
 table1DDS  <- function(xvect){
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
 
   # the minimum number of observations that are allowed (the below function gets the value from opal)
   
@@ -35,15 +37,16 @@ table1DDS  <- function(xvect){
   colnames(cc) <- c(aa[1,], "Total")
 
   # check for invalid cells if any found change them to 'NA' and set the validity message accordingly
-  validity <- "valid Table"
+  studysideMessage <- "valid Table"
   indx <- which(cc[1,1:(dim(cc)[2] - 1)] > 0 & cc[1,1:(dim(cc)[2] - 1)] < nfilter.tab)
   if(length(indx) > 0){
     cc[1,1:(dim(cc)[2] - 1)] <- NA
-    validity <- "invalid table - invalid counts present"
-    stop(validity, call. = FALSE)
+    studysideMessage <- "invalid table - invalid counts present"
+    span$set_status("error", studysideMessage)
+    stop(studysideMessage, call. = FALSE)
   }
   
   # return output table and message
-  return(list(table=cc, message=validity))
+  return(list(table=cc, message=studysideMessage))
 }
 

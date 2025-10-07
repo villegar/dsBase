@@ -12,6 +12,8 @@
 #' @export
 #'
 lexisDS1 <- function(exitCol=NULL){
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
   
   #############################################################
   #MODULE 1: CAPTURE THE nfilter SETTINGS
@@ -24,8 +26,9 @@ lexisDS1 <- function(exitCol=NULL){
   
   exitCol.length <- length(strsplit(exitCol,"")[[1]])
   if(exitCol.length>nfilter.string){
-    errorMessage <- "ERROR: character string naming exitCol is too long please shorten name"
-    stop(errorMessage, call. = FALSE)
+    studysideMessage <- "ERROR: character string naming exitCol is too long please shorten name"
+    span$set_status("error", studysideMessage)
+    stop(studysideMessage, call. = FALSE)
   }
   
   exposure <- eval(parse(text=exitCol), envir = parent.frame())

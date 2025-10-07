@@ -36,8 +36,9 @@
 #' @export
 tableDS<-function(rvar.transmit, cvar.transmit, stvar.transmit, rvar.all.unique.levels.transmit, cvar.all.unique.levels.transmit, 
                   stvar.all.unique.levels.transmit, exclude.transmit, useNA.transmit, force.nfilter.transmit){
-
-
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
+  
 #########################################################################
 # DataSHIELD MODULE: CAPTURE THE nfilter SETTINGS                       #
 thr<-dsBase::listDisclosureSettingsDS()                                 #
@@ -52,15 +53,15 @@ nfilter.tab<-as.numeric(thr$nfilter.tab)                                #
 
 #Force higher value of nfilter
 
-
 if(!is.null(force.nfilter.transmit))
 {
 force.nfilter.active<-eval(parse(text=force.nfilter.transmit), envir = parent.frame())
 
 	if(force.nfilter.active<nfilter.tab)
 	{
-	return.message<-paste0("Failed: if force.nfilter is non-null it must be >= to nfilter.tab i.e.",nfilter.tab)  
-	stop(return.message, call. = FALSE)
+	studysideMessage <- paste0("Failed: if force.nfilter is non-null it must be >= to nfilter.tab i.e.", nfilter.tab)
+	span$set_status("error", studysideMessage)
+	stop(studysideMessage, call. = FALSE)
 	}
 }
 else
@@ -151,8 +152,9 @@ numcells<-length(test.outobj)
 
 	if(!counts.valid)
 	{
-	return.message<-paste0("Failed: at least one cell has a non-zero count less than nfilter.tab i.e. ",nfilter.tab)  
-	stop(return.message, call. = FALSE)
+	studysideMessage <- paste0("Failed: at least one cell has a non-zero count less than nfilter.tab i.e. ", nfilter.tab)
+	span$set_status("error", studysideMessage)
+	stop(studysideMessage, call. = FALSE)
 	}else{
 	outobj<-table(rvar,cvar,stvar,exclude=exclude,useNA=useNA.transmit)	
 	}

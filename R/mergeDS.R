@@ -54,6 +54,8 @@
 #' @export
 mergeDS <- function(x.name, y.name, by.x.names.transmit, by.y.names.transmit, all.x, all.y,
 			 sort, suffixes.transmit, no.dups, incomparables){
+  # start OpenTelemetry span
+  span <- otel::start_local_active_span(deparse1(sys.call(0)[[1]]))
   
   #########################################################################
   # DataSHIELD MODULE: CAPTURE THE nfilter SETTINGS
@@ -65,15 +67,15 @@ mergeDS <- function(x.name, y.name, by.x.names.transmit, by.y.names.transmit, al
   # check text to be activated is not too long because of disclosure risk
   x.name.numchars <- length(unlist(strsplit(x.name, split="")))
   if(x.name.numchars > nfilter.stringShort){
-     studysideMessage <-
-     paste0("Disclosure risk, number of characters in x.name must not exceed nfilter.stringShort which is currently set at: ",nfilter.stringShort)
+     studysideMessage <- paste0("Disclosure risk, number of characters in x.name must not exceed nfilter.stringShort which is currently set at: ", nfilter.stringShort)
+     span$set_status("error", studysideMessage)
      stop(studysideMessage, call. = FALSE)
   }
   
   y.name.numchars <- length(unlist(strsplit(y.name, split="")))
   if(y.name.numchars > nfilter.stringShort){
-     studysideMessage <-
-     paste0("Disclosure risk, number of characters in y.name must not exceed nfilter.stringShort which is currently set at: ",nfilter.stringShort)
+     studysideMessage <- paste0("Disclosure risk, number of characters in y.name must not exceed nfilter.stringShort which is currently set at: ", nfilter.stringShort)
+     span$set_status("error", studysideMessage)
      stop(studysideMessage, call. = FALSE)
   }
   
@@ -84,11 +86,13 @@ mergeDS <- function(x.name, y.name, by.x.names.transmit, by.y.names.transmit, al
   # check data.frames are valid data.frames
   if(!is.data.frame(x.data.frame)){
     studysideMessage <- "Error: x.name must specify a data.frame"
+    span$set_status("error", studysideMessage)
     stop(studysideMessage, call. = FALSE)
   }
   
   if(!is.data.frame(y.data.frame)){
     studysideMessage <- "Error: y.name must specify a data.frame"
+    span$set_status("error", studysideMessage)
     stop(studysideMessage, call. = FALSE)
   }
 
@@ -104,8 +108,8 @@ mergeDS <- function(x.name, y.name, by.x.names.transmit, by.y.names.transmit, al
 		}
 	}
 	if(!colnames.x.valid){
-    studysideMessage <-
-    paste0("Disclosure risk, the number of characters in at least one by.x.name exceeds nfilter.stringShort which is currently set at: ",nfilter.stringShort)
+    studysideMessage <- paste0("Disclosure risk, the number of characters in at least one by.x.name exceeds nfilter.stringShort which is currently set at: ", nfilter.stringShort)
+    span$set_status("error", studysideMessage)
     stop(studysideMessage, call. = FALSE)
 	}
 
@@ -119,8 +123,8 @@ mergeDS <- function(x.name, y.name, by.x.names.transmit, by.y.names.transmit, al
 		}
 	}
 	if(!colnames.y.valid){
-    studysideMessage<-
-    paste0("Disclosure risk, the number of characters in at least one by.y.name exceeds nfilter.stringShort which is currently set at: ",nfilter.stringShort)
+    studysideMessage <- paste0("Disclosure risk, the number of characters in at least one by.y.name exceeds nfilter.stringShort which is currently set at: ", nfilter.stringShort)
+    span$set_status("error", studysideMessage)
     stop(studysideMessage, call. = FALSE)
 	}
 
@@ -141,8 +145,8 @@ mergeDS <- function(x.name, y.name, by.x.names.transmit, by.y.names.transmit, al
 	}
 
 	if(!suffixes.valid){
-    studysideMessage<-
-    paste0("Disclosure risk, the number of characters in at least one specified suffix exceeds nfilter.stringShort which is currently set at: ",nfilter.stringShort)
+    studysideMessage <- paste0("Disclosure risk, the number of characters in at least one specified suffix exceeds nfilter.stringShort which is currently set at: ", nfilter.stringShort)
+    span$set_status("error", studysideMessage)
     stop(studysideMessage, call. = FALSE)
 	}
 
