@@ -95,10 +95,9 @@ extractQuantilesDS1 <- function(extract.quantiles,extract.summary.output.ranks.d
    numsubs.real<-max(ranks/quants)
    
    if((numsubs.real/numvals)<=nfilter.tab){
-     error.message<-
-       paste0("FAILED: the total number of observations across all studies is so small that there is a disclosure risk in releasing the list of quantiles requested. You could change the quantiles.for.estimation argument to request a narrower range of quantiles to be be estimated.")
-     span$set_status("error", error.message)
-     stop(error.message, call. = FALSE)
+     studysideMessage <- paste0("FAILED: the total number of observations across all studies is so small that there is a disclosure risk in releasing the list of quantiles requested. You could change the quantiles.for.estimation argument to request a narrower range of quantiles to be be estimated.")
+     span$set_status("error", studysideMessage)
+     stop(studysideMessage, call. = FALSE)
    }
    
   

@@ -137,19 +137,16 @@ input.var.probit<-stats::pnorm(input.var.probit.temp)
 
 
 if(min(input.var.probit)<=0 | max(input.var.probit)>=1){
-  error.message<-
-    paste0("FAILED: initialised values should strictly be >0 and <1 this rule has been violated
-           there is possiblyly an NA, inf or other error in the input.global.ranks")
-  span$set_status("error", error.message)
-  stop(error.message, call. = FALSE)
+  studysideMessage <- paste0("FAILED: initialised values should strictly be >0 and <1 this rule has been violated there is possiblyly an NA, inf or other error in the input.global.ranks")
+  span$set_status("error", studysideMessage)
+  stop(studysideMessage, call. = FALSE)
 } 
 
 
 if(min(rank(input.global.ranks)-rank(input.var.probit))<0 | max(rank(input.global.ranks)-rank(input.var.probit))>0) {
-  error.message<-
-    paste0("FAILED: probit initialised values are not in an identical order to the original input variable please check")
-  span$set_status("error", error.message)
-  stop(error.message, call. = FALSE)
+  studysideMessage <- paste0("FAILED: probit initialised values are not in an identical order to the original input variable please check")
+  span$set_status("error", studysideMessage)
+  stop(studysideMessage, call. = FALSE)
 } 
 
 
@@ -257,14 +254,14 @@ utils::head(blackbox.ranks.df)
 
 if(sum(round(rank(blackbox.ranks.df[,5])-rank(blackbox.ranks.df[,8]),2)==0)!=numsubs)
 {
-  error.message<-
+  studysideMessage <-
     paste0("FAILED: inconsistent ranking across different transformations in black box,
             try a different seed. Altenatively this could reflect modification of the
             clientside code which is not recommended. Finally, it can also occur
             if the R session on one or more of the opal data servers runs out
             of memory")
-  span$set_status("error", error.message)
-  stop(error.message, call. = FALSE)
+  span$set_status("error", studysideMessage)
+  stop(studysideMessage, call. = FALSE)
 }else{
   message("\nPROCESSING SUCCESSFUL, ALL RANKS AGREE FOR ALL TRANSFORMATIONS\n\n")
 }

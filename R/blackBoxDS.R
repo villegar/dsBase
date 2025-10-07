@@ -170,10 +170,9 @@ set.seed(shared.seedval+restart.seed.other.seed.actions+study.specific.seed)
 #sythetic data is always effectively zero
 
 if(max.sd.input.var<(sqrt(stats::var(input.var, na.rm=TRUE)))/2){
-  error.message<-
-    paste0("FAILED: the estimated standard deviation being used to generate part of the random component of the synthetic pseudodata is considerably smaller than the actual standard deviation of the input variable (V2BR) suggesting that information may have been fed in from the clientside to create a modified value that is too small. As this increases disclosure risk the whole ranking analysis has been halted")
-  span$set_status("error", error.message)
-  stop(error.message, call. = FALSE)
+  studysideMessage <- paste0("FAILED: the estimated standard deviation being used to generate part of the random component of the synthetic pseudodata is considerably smaller than the actual standard deviation of the input variable (V2BR) suggesting that information may have been fed in from the clientside to create a modified value that is too small. As this increases disclosure risk the whole ranking analysis has been halted")
+  span$set_status("error", studysideMessage)
+  stop(studysideMessage, call. = FALSE)
 }
 
 #create synthetic data vector
@@ -256,19 +255,16 @@ input.var.probit<-stats::pnorm(input.var.probit.temp)
 
 
 if(min(input.var.probit)<=0 | max(input.var.probit)>=1){
-  error.message<-
-    paste0("FAILED: initialised values should strictly be >0 and <1 this rule has been violated
-           there is possiblyly an NA, inf or other error in the input.var.orig")
-  span$set_status("error", error.message)
-  stop(error.message, call. = FALSE)
+  studysideMessage <- paste0("FAILED: initialised values should strictly be >0 and <1 this rule has been violated there is possiblyly an NA, inf or other error in the input.var.orig")
+  span$set_status("error", studysideMessage)
+  stop(studysideMessage, call. = FALSE)
 } 
 
 
 if(min(rank(input.var.real.synth.orig)-rank(input.var.probit))<0 | max(rank(input.var.real.synth.orig)-rank(input.var.probit))>0) {
-  error.message<-
-    paste0("FAILED: probit initialised values are not in an identical order to the original input variable please check")
-  span$set_status("error", error.message)
-  stop(error.message, call. = FALSE)
+  studysideMessage <- paste0("FAILED: probit initialised values are not in an identical order to the original input variable please check")
+  span$set_status("error", studysideMessage)
+  stop(studysideMessage, call. = FALSE)
 } 
 
 
@@ -368,14 +364,14 @@ blackbox.output.df <- output.df.sort.by.val
 
 if(sum(round(rank(blackbox.output.df[,3])-rank(blackbox.output.df[,4]),2)==0)!=numsubs)
 {
-  error.message<-
+  studysideMessage <- 
     paste0("FAILED: inconsistent values across different transformations in black box,
             try a different seed. Altenatively this could reflect modification of the
             clientside code which is not recommended. Finally, it can also occur
             if the R session on one or more of the opal data servers runs out
             of memory")
-  span$set_status("error", error.message)
-  stop(error.message, call. = FALSE)
+  span$set_status("error", studysideMessage)
+  stop(studysideMessage, call. = FALSE)
 }else{
   message("\nPROCESSING SUCCESSFUL, ALL RANKS AGREE FOR ALL TRANSFORMATIONS\n\n")
 }

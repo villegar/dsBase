@@ -34,18 +34,16 @@ asFactorDS1 <- function(input.var.name=NULL){
   
   if(num.levels>nfilter.levels.max)
   {
-    error.message<-
-      paste0("FAILED: this variable has too many levels and may be disclosive. It exceeds the max number of levels allowed by nfilter.levels.max: that is ",nfilter.levels.max,". In this study this variable has ",num.levels," factor levels")
-    span$set_status("error", error.message)
-    stop(error.message, call. = FALSE)
+    studysideMessage <- paste0("FAILED: this variable has too many levels and may be disclosive. It exceeds the max number of levels allowed by nfilter.levels.max: that is ",nfilter.levels.max,". In this study this variable has ",num.levels," factor levels")
+    span$set_status("error", studysideMessage)
+    stop(studysideMessage, call. = FALSE)
   }
   
   if(num.levels>(length(input.var)*nfilter.levels.density))
   {
-    error.message<-
-      paste0("FAILED: this variable has too many levels and may be disclosive. The number of factor levels must not exceed ", (nfilter.levels.density*100), "% of the length of the variable being converted to a factor. The max number of levels in this study is therefore ",max.levels.by.density," but this variable has ",num.levels," factor levels")
-    span$set_status("error", error.message)
-    stop(error.message, call. = FALSE)
+    studysideMessage <- paste0("FAILED: this variable has too many levels and may be disclosive. The number of factor levels must not exceed ", (nfilter.levels.density*100), "% of the length of the variable being converted to a factor. The max number of levels in this study is therefore ",max.levels.by.density," but this variable has ",num.levels," factor levels")
+    span$set_status("error", studysideMessage)
+    stop(studysideMessage, call. = FALSE)
   }
   
   return(factor.levels.present.in.source)
